@@ -2,11 +2,6 @@
 // John Hurst
 // 2022-01-04
 
-plugins {
-    id "org.jetbrains.kotlin.jvm" version "1.6.10"
-    id "groovy"
-}
-
 repositories {
     mavenCentral()
 }
