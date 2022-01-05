@@ -2,12 +2,12 @@
 // John Hurst
 // 2022-01-04
 
-description = "description"
-
 plugins {
-    kotlin("jvm")
-    groovy
+    id "org.jetbrains.kotlin.jvm"
+    id "groovy"
 }
+
+description = "description"
 
 repositories {
     mavenCentral()
