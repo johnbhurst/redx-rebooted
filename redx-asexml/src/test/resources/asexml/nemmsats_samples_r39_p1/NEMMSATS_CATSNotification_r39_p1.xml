@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ase:aseXML xmlns:ase="urn:aseXML:r39_p1" 
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+            xsi:schemaLocation="urn:aseXML:r39_p1 http://www.nemmco.com.au/aseXML/schemas/r39_p1/aseXML_r39_p1.xsd
+">
+	<Header>
+		<From description="Vencorp">VENCORP</From>
+		<To description="TXU Networks">TXUN</To>
+		<MessageID>AAA</MessageID>
+		<MessageDate>2002-01-01T12:00:00</MessageDate>
+		<TransactionGroup>CATS</TransactionGroup>
+		<Priority>Medium</Priority>
+		<Market>VICGAS</Market>
+	</Header>
+	<Transactions>
+		<Transaction transactionID="XXX" transactionDate="2002-01-01T12:00:00">
+			<CATSNotification version="r29">
+				<Role>CDB</Role>
+				<RoleStatus>C</RoleStatus>
+				<ChangeRequest>
+					<Participant>TXUR</Participant>
+					<RequestID>123456789012345</RequestID>
+					<ChangeStatusCode>OBJ</ChangeStatusCode>
+					<ChangeData>
+						<ChangeReasonCode>0002</ChangeReasonCode>
+						<ProposedDate>2002-07-01</ProposedDate>
+						<NMIStandingData xsi:type="ase:ElectricityStandingData">
+							<NMI checksum="3">8374635465</NMI>
+						</NMIStandingData>
+					</ChangeData>
+				</ChangeRequest>
+				<Objection>
+					<Participant>UNITED</Participant>
+					<ObjectionID>123456789012345</ObjectionID>
+					<ObjectionAction>Raised</ObjectionAction>
+					<ObjectionData>
+						<InitiatingRequestID>1234</InitiatingRequestID>
+						<Role>CFRO</Role>
+						<ObjectionCode>AGEDDEBT</ObjectionCode>
+					</ObjectionData>
+					<ObjectionDate>2002-03-01</ObjectionDate>
+				</Objection>
+				<JurisdictionCode>NSW</JurisdictionCode>
+				<NMIClassificationCode>SMALL</NMIClassificationCode>
+				<ObjectionEndDate>2002-04-01</ObjectionEndDate>
+			</CATSNotification>
+		</Transaction>
+		<Transaction transactionID="YYY" transactionDate="2002-01-02T12:00:00">
+			<CATSNotification version="r29">
+				<Role>CDB</Role>
+				<RoleStatus>C</RoleStatus>
+				<ChangeRequest>
+					<Participant>TXUR</Participant>
+					<RequestID>123456789012346</RequestID>
+					<ChangeStatusCode>OBJ</ChangeStatusCode>
+					<ChangeData>
+						<ChangeReasonCode>0003</ChangeReasonCode>
+						<ProposedDate>2002-07-02</ProposedDate>
+						<NMIStandingData xsi:type="ase:ElectricityStandingData">
+							<NMI checksum="3">8374635465</NMI>
+						</NMIStandingData>
+					</ChangeData>
+				</ChangeRequest>
+				<Objection>
+					<Participant>UNITED</Participant>
+					<ObjectionID>123456789012346</ObjectionID>
+					<ObjectionAction>Raised</ObjectionAction>
+					<ObjectionData>
+						<InitiatingRequestID>1235</InitiatingRequestID>
+						<Role>CFRO</Role>
+						<ObjectionCode>AGEDDEBT</ObjectionCode>
+					</ObjectionData>
+					<ObjectionDate>2002-03-02</ObjectionDate>
+				</Objection>
+				<JurisdictionCode>NSW</JurisdictionCode>
+				<NMIClassificationCode>SMALL</NMIClassificationCode>
+				<ObjectionEndDate>2002-04-02</ObjectionEndDate>
+			</CATSNotification>
+		</Transaction>
+	</Transactions>
+</ase:aseXML>
