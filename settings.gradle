@@ -9,4 +9,5 @@ pluginManagement {
 }
 
 include "redx-asexml"
+include "redx-filter-lang"
 include "redx-xpath"

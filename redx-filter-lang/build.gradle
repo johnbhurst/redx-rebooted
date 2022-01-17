@@ -1,0 +1,24 @@
+// Copyright 2022 John Hurst
+// John Hurst
+// 2022-01-18
+
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "groovy"
+}
+
+description = "Filter language for list API"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation("org.spockframework:spock-core:2.0-groovy-3.0")
+}
+
+tasks {
+    test {
+        useJUnitPlatform()
+    }
+}
