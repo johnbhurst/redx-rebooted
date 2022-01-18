@@ -11,16 +11,15 @@ import redx.filter.TokenType.EQUALS
 import redx.filter.TokenType.GREATER_EQUALS
 import redx.filter.TokenType.GREATER_THAN
 import redx.filter.TokenType.HAS
-import redx.filter.TokenType.IDENTIFIER
 import redx.filter.TokenType.LESS_EQUALS
 import redx.filter.TokenType.LESS_THAN
 import redx.filter.TokenType.LPAREN
 import redx.filter.TokenType.MINUS
 import redx.filter.TokenType.NOT
 import redx.filter.TokenType.NOT_EQUALS
-import redx.filter.TokenType.NUMBER
 import redx.filter.TokenType.OR
 import redx.filter.TokenType.RPAREN
+import redx.filter.TokenType.TEXT
 
 /**
  * @link https://google.aip.dev/160
@@ -62,31 +61,13 @@ class Scanner(val source: String) {
             ' ', '\r', '\t' -> {}
             '\n' -> line++
             '"' -> string()
-            else -> if (isDigits(c)) {
-                number()
-            } else if (isAlpha(c)) {
-                identifier()
+            else -> if (isText(c)) {
+                text()
             } else {
                 error("Unexpected character.") // TODO: errors
             }
 
         }
-    }
-
-    fun identifier() {
-        while (isAlphanumeric(peek())) advance()
-        val text = source.substring(start, current)
-        val type = keywords.getOrDefault(text, IDENTIFIER)
-        addToken(type)
-    }
-
-    fun number() {
-        while (isDigits(peek())) advance()
-        if (peek() == '.' && isDigits(peekNext())) {
-            advance() // Consume the '.'
-            while (isDigits(peek())) advance()
-        }
-        addToken(NUMBER, source.substring(start, current).toDouble())
     }
 
     fun string() {
@@ -102,6 +83,13 @@ class Scanner(val source: String) {
         addToken(TokenType.STRING, value)
     }
 
+    fun text() {
+        while (!isAtEnd() && isText(peek())) advance()
+        val text = source.substring(start, current)
+        val type = keywords.getOrDefault(text, TEXT)
+        addToken(type)
+    }
+
     fun match(expected: Char): Boolean {
         if (isAtEnd()) return false
         if (source[current] != expected) return false
@@ -111,13 +99,9 @@ class Scanner(val source: String) {
 
     fun peek() = if (isAtEnd()) '\u0000' else source[current]
 
-    fun peekNext() = if (current + 1 >= source.length) '\u0000' else source[current + 1]
+    fun isText(c: Char) = !isWhitespace(c) && c != '.'
 
-    fun isAlpha(c: Char) = c in 'a' .. 'z' || c in 'A' .. 'Z' || c == '_'
-
-    fun isAlphanumeric(c: Char) = isAlpha(c) || isDigits(c)
-
-    fun isDigits(c: Char) = c in '0'..'9'
+    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\r' || c == '\n'
 
     fun isAtEnd(): Boolean = current >= source.length
 

@@ -22,9 +22,10 @@ class ScannerTest extends Specification {
         line         || result
         "=()-.:"      | [token(TokenType.EQUALS, "="), token(TokenType.LPAREN, "("), token(TokenType.RPAREN, ")"), token(TokenType.MINUS, "-"), token(TokenType.DOT, "."), token(TokenType.HAS, ":")]
         "<=<>=>!="    | [token(TokenType.LESS_EQUALS, "<="), token(TokenType.LESS_THAN, "<"), token(TokenType.GREATER_EQUALS, ">="), token(TokenType.GREATER_THAN, ">"), token(TokenType.NOT_EQUALS, "!=")]
-        "five"        | [token(TokenType.IDENTIFIER, "five")]
         "\"six\""     | [token(TokenType.STRING, "\"six\"", "six")]
-        "123"         | [token(TokenType.NUMBER, "123", 123.0 as Double)]
+        "five"        | [token(TokenType.TEXT, "five")]
+        "123"         | [token(TokenType.TEXT, "123")]
+        "this or that"| [token(TokenType.TEXT, "this"), token(TokenType.OR, "or"), token(TokenType.TEXT, "that")]
         "and or not"  | [token(TokenType.AND, "and"), token(TokenType.OR, "or"), token(TokenType.NOT, "not")]
     }
 }
