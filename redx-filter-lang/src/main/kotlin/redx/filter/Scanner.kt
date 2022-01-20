@@ -102,9 +102,15 @@ class Scanner(val source: String) {
 
     fun peek() = if (isAtEnd()) '\u0000' else source[current]
 
-    fun isText(c: Char) = !isWhitespace(c) && c != '.'
+    fun isText(c: Char) = isAlphanumeric(c) || c == '_' || c == '$'
 
-    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\r' || c == '\n'
+    fun isAlpha(c: Char) = c in 'a' .. 'z' || c in 'A' .. 'Z'
+
+    fun isDigit(c: Char) = c in '0' .. '9'
+
+    fun isAlphanumeric(c: Char) = isAlpha(c) || isDigit(c)
+
+//    fun isWhitespace(c: Char) = c == ' ' || c == '\t' || c == '\r' || c == '\n'
 
     fun isAtEnd(): Boolean = current >= source.length
 
