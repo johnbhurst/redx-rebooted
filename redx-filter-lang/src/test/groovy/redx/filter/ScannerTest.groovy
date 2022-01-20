@@ -20,7 +20,7 @@ class ScannerTest extends Specification {
 
         where:
         line         || result
-        "=()-.:"      | [token(TokenType.EQUALS, "="), token(TokenType.LPAREN, "("), token(TokenType.RPAREN, ")"), token(TokenType.MINUS, "-"), token(TokenType.DOT, "."), token(TokenType.HAS, ":")]
+        "=()-,.:"      | [token(TokenType.EQUALS, "="), token(TokenType.LPAREN, "("), token(TokenType.RPAREN, ")"), token(TokenType.MINUS, "-"), token(TokenType.COMMA, ","), token(TokenType.DOT, "."), token(TokenType.HAS, ":")]
         "<=<>=>!="    | [token(TokenType.LESS_EQUALS, "<="), token(TokenType.LESS_THAN, "<"), token(TokenType.GREATER_EQUALS, ">="), token(TokenType.GREATER_THAN, ">"), token(TokenType.NOT_EQUALS, "!=")]
         "\"six\""     | [token(TokenType.STRING, "\"six\"", "six")]
         "five"        | [token(TokenType.TEXT, "five")]

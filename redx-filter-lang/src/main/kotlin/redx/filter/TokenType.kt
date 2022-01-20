@@ -11,7 +11,7 @@ package redx.filter
  */
 enum class TokenType {
     // Single-character tokens
-    EQUALS, LPAREN, RPAREN, MINUS, DOT, HAS,
+    EQUALS, LPAREN, RPAREN, MINUS, COMMA, DOT, HAS,
     // One or two-character tokens.
     LESS_EQUALS, LESS_THAN, GREATER_EQUALS, GREATER_THAN, NOT_EQUALS,
     // Literals

@@ -5,6 +5,7 @@
 package redx.filter
 
 import redx.filter.TokenType.AND
+import redx.filter.TokenType.COMMA
 import redx.filter.TokenType.DOT
 import redx.filter.TokenType.EOF
 import redx.filter.TokenType.EQUALS
@@ -31,11 +32,13 @@ class Scanner(val source: String) {
     var start = 1
     var current = 0
     var line = 1
-    val keywords = mapOf(
-        "and" to AND,
-        "or" to OR,
-        "not" to NOT,
-    )
+    companion object {
+        val keywords = mapOf(
+            "and" to AND,
+            "or" to OR,
+            "not" to NOT,
+        )
+    }
 
     fun scanTokens(): List<Token> {
         while (!isAtEnd()) {
@@ -52,6 +55,7 @@ class Scanner(val source: String) {
             '(' -> addToken(LPAREN)
             ')' -> addToken(RPAREN)
             '-' -> addToken(MINUS)
+            ',' -> addToken(COMMA)
             '.' -> addToken(DOT)
             '<' -> addToken(if (match('=')) LESS_EQUALS else LESS_THAN)
             '>' -> addToken(if (match('=')) GREATER_EQUALS else GREATER_THAN)
