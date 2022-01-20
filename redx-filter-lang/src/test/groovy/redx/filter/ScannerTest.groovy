@@ -59,9 +59,19 @@ class ScannerTest extends Specification {
         new Scanner(input).scanTokens()
 
         then:
-        thrown(RuntimeException)
+        def ex = thrown(RuntimeException)
+        ex.message == "Unexpected character."
 
         where:
-        input << ["~", "`", "!", "#"]
+        input << ["~", "`", "#"]
+    }
+
+    def "Incomplete token"() {
+        when:
+        new Scanner("! ").scanTokens()
+
+        then:
+        def ex = thrown(RuntimeException)
+        ex.message == "Expected '=' following '!'"
     }
 }
