@@ -70,7 +70,6 @@ class Scanner(val source: String) {
             } else {
                 error("Unexpected character.") // TODO: errors
             }
-
         }
     }
 
