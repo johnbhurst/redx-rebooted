@@ -34,9 +34,9 @@ class Scanner(val source: String) {
     var line = 1
     companion object {
         val keywords = mapOf(
-            "and" to AND,
-            "or" to OR,
-            "not" to NOT,
+            "AND" to AND,
+            "OR" to OR,
+            "NOT" to NOT,
         )
     }
 

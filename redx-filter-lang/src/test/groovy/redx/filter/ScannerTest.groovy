@@ -32,9 +32,9 @@ class ScannerTest extends Specification {
     static final Token GREATER_EQUALS = token(TokenType.GREATER_EQUALS, ">=")
     static final Token GREATER_THAN = token(TokenType.GREATER_THAN, ">")
     static final Token NOT_EQUALS = token(TokenType.NOT_EQUALS, "!=")
-    static final Token AND = token(TokenType.AND, "and")
-    static final Token OR = token(TokenType.OR, "or")
-    static final Token NOT = token(TokenType.NOT, "not")
+    static final Token AND = token(TokenType.AND, "AND")
+    static final Token OR = token(TokenType.OR, "OR")
+    static final Token NOT = token(TokenType.NOT, "NOT")
     static final Token EOF = token(TokenType.EOF, "")
 
     def "Scanner scans tokens"() {
@@ -48,8 +48,10 @@ class ScannerTest extends Specification {
         "\"six\""        | [string("six")]
         "five"           | [text("five")]
         "123"            | [text("123")]
-        "this or that"   | [text("this"), OR, text("that")]
-        "and or not"     | [AND, OR, NOT]
+        "this OR that"   | [text("this"), OR, text("that")]
+        "this or that"   | [text("this"), text("or"), text("that")]
+        "AND OR NOT"     | [AND, OR, NOT]
+        "and or not"     | [text("and"), text("or"), text("not")]
         "one=two,three"  | [text("one"), EQUALS, text("two"), COMMA, text("three")]
         "(simple)"       | [LPAREN, text("simple"), RPAREN]
     }
