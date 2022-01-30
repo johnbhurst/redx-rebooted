@@ -2,6 +2,9 @@ package redx.filter
 
 import spock.lang.Specification
 
+import java.time.LocalDate
+import java.time.LocalDateTime
+
 class ScannerTest extends Specification {
 
     static Token token(TokenType tokenType, String lexeme) {
@@ -12,12 +15,28 @@ class ScannerTest extends Specification {
         new Token(tokenType, lexeme, literal, 1)
     }
 
-    static Token string(String s) {
+    static Token text(String s) {
+        token(TokenType.TEXT, s)
+    }
+
+    static Token doubleString(String s) {
         token(TokenType.STRING, "\"$s\"", s)
     }
 
-    static Token text(String s) {
-        token(TokenType.TEXT, s)
+    static Token singleString(String s) {
+        token(TokenType.STRING, "'$s'", s)
+    }
+
+    static Token integer(Integer i) {
+        token(TokenType.INTEGER, i.toString(), i)
+    }
+
+    static Token date(LocalDate d) {
+        token(TokenType.DATE, d.toString(), d)
+    }
+
+    static Token datetime(LocalDateTime dt) {
+        token(TokenType.DATETIME, dt.toString(), dt)
     }
 
     static final Token EQUALS = token(TokenType.EQUALS, "=")
@@ -42,18 +61,23 @@ class ScannerTest extends Specification {
         new Scanner(input).scanTokens() == result + [EOF]
 
         where:
-        input           || result
-        "=()-,.:"        | [EQUALS, LPAREN, RPAREN, MINUS, COMMA, DOT, HAS]
-        "<=<>=>!="       | [LESS_EQUALS, LESS_THAN, GREATER_EQUALS, GREATER_THAN, NOT_EQUALS]
-        "\"six\""        | [string("six")]
-        "five"           | [text("five")]
-        "123"            | [text("123")]
-        "this OR that"   | [text("this"), OR, text("that")]
-        "this or that"   | [text("this"), text("or"), text("that")]
-        "AND OR NOT"     | [AND, OR, NOT]
-        "and or not"     | [text("and"), text("or"), text("not")]
-        "one=two,three"  | [text("one"), EQUALS, text("two"), COMMA, text("three")]
-        "(simple)"       | [LPAREN, text("simple"), RPAREN]
+        input                || result
+        "=()-,.:"             | [EQUALS, LPAREN, RPAREN, MINUS, COMMA, DOT, HAS]
+        "<=<>=>!="            | [LESS_EQUALS, LESS_THAN, GREATER_EQUALS, GREATER_THAN, NOT_EQUALS]
+        "five"                | [text("five")]
+        "one.two.three"       | [text("one.two.three")]
+        "\"six\""             | [doubleString("six")]
+        "'seven'"             | [singleString("seven")]
+        "123"                 | [integer(123)]
+        "2022-01-24"          | [date(LocalDate.of(2022, 1, 24))]
+        "2022-01-24T09:17:30" | [datetime(LocalDateTime.of(2022, 1, 24, 9, 17, 30))]
+        "this OR that"        | [text("this"), OR, text("that")]
+        "this or that"        | [text("this"), text("or"), text("that")]
+        "AND OR NOT"          | [AND, OR, NOT]
+        "and or not"          | [text("and"), text("or"), text("not")]
+        "one=two,three"       | [text("one"), EQUALS, text("two"), COMMA, text("three")]
+        "(simple)"            | [LPAREN, text("simple"), RPAREN]
+        // TODO: more robust raw text tokenization, tests for invalid characters when not matching datetime, date, int.
     }
 
     def "Unexpected characters"() {

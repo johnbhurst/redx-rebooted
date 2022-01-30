@@ -15,7 +15,7 @@ enum class TokenType {
     // One or two-character tokens.
     LESS_EQUALS, LESS_THAN, GREATER_EQUALS, GREATER_THAN, NOT_EQUALS,
     // Literals
-    STRING, TEXT,
+    TEXT, STRING, INTEGER, DATE, DATETIME,
     // Keywords
     AND, OR, NOT,
 

@@ -6,12 +6,15 @@ package redx.filter
 
 import redx.filter.TokenType.AND
 import redx.filter.TokenType.COMMA
+import redx.filter.TokenType.DATE
+import redx.filter.TokenType.DATETIME
 import redx.filter.TokenType.DOT
 import redx.filter.TokenType.EOF
 import redx.filter.TokenType.EQUALS
 import redx.filter.TokenType.GREATER_EQUALS
 import redx.filter.TokenType.GREATER_THAN
 import redx.filter.TokenType.HAS
+import redx.filter.TokenType.INTEGER
 import redx.filter.TokenType.LESS_EQUALS
 import redx.filter.TokenType.LESS_THAN
 import redx.filter.TokenType.LPAREN
@@ -21,6 +24,8 @@ import redx.filter.TokenType.NOT_EQUALS
 import redx.filter.TokenType.OR
 import redx.filter.TokenType.RPAREN
 import redx.filter.TokenType.TEXT
+import java.time.LocalDate
+import java.time.LocalDateTime
 
 /**
  * @link https://google.aip.dev/160
@@ -38,6 +43,9 @@ class Scanner(val source: String) {
             "OR" to OR,
             "NOT" to NOT,
         )
+        val DATETIME_PATTERN = Regex("""\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}""")
+        val DATE_PATTERN = Regex("""\d{4}-\d{2}-\d{2}""")
+        val INTEGER_PATTERN = Regex("""\d{1,9}""")
     }
 
     fun scanTokens(): List<Token> {
@@ -64,7 +72,8 @@ class Scanner(val source: String) {
             ':' -> addToken(HAS)
             ' ', '\r', '\t' -> {}
             '\n' -> line++
-            '"' -> string()
+            '"' -> string('"')
+            '\'' -> string('\'')
             else -> if (isText(c)) {
                 text()
             } else {
@@ -73,8 +82,8 @@ class Scanner(val source: String) {
         }
     }
 
-    fun string() {
-        while (peek() != '"' && !isAtEnd()) {
+    fun string(delim: Char) {
+        while (peek() != delim && !isAtEnd()) {
             if (peek() == '\n') line++
             advance()
         }
@@ -89,8 +98,13 @@ class Scanner(val source: String) {
     fun text() {
         while (!isAtEnd() && isText(peek())) advance()
         val text = source.substring(start, current)
-        val type = keywords.getOrDefault(text, TEXT)
-        addToken(type)
+        when {
+            text in keywords -> addToken(keywords.getValue(text))
+            DATETIME_PATTERN.matches(text) -> addToken(DATETIME, LocalDateTime.parse(text))
+            DATE_PATTERN.matches(text) -> addToken(DATE, LocalDate.parse(text))
+            INTEGER_PATTERN.matches(text) -> addToken(INTEGER, text.toInt())
+            else -> addToken(TEXT)
+        }
     }
 
     fun match(expected: Char): Boolean {
@@ -102,7 +116,7 @@ class Scanner(val source: String) {
 
     fun peek() = if (isAtEnd()) '\u0000' else source[current]
 
-    fun isText(c: Char) = isAlphanumeric(c) || c == '_' || c == '$'
+    fun isText(c: Char) = isAlphanumeric(c) || c == '_' || c == '-' || c == ':' || c == '$' || c == '.'
 
     fun isAlpha(c: Char) = c in 'a' .. 'z' || c in 'A' .. 'Z'
 
