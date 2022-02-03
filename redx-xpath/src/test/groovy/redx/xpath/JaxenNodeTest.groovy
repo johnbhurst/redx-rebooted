@@ -36,6 +36,8 @@ class JaxenNodeTest extends Specification {
         xml.text("doc/val") == "onetwothree"
         and: "text() returns text content from elements and descendents"
         xml.text("doc/mixed") == "The quick brown fox jumps over the lazy dog"
+        and: "text() on root element returns all text"
+        xml.text("/*") == "\none\n\n\none\ntwo\nthree\nThe quick brown fox jumps over the lazy dog\n"
     }
 
     void "text() returns attribute values for matching attributes"() {
@@ -45,6 +47,11 @@ class JaxenNodeTest extends Specification {
         xml.text("doc/@attr2") == ""
         and: "text() returns null when attribute is not present"
         xml.text("doc/@attr3") == null
+    }
+
+    void "nodes() for /text() returns text chunks"() {
+        expect:
+        xml.nodes("//text()")*.textContent == ["\n", "one", "\n", "\n", "\n", "one", "\n", "two", "\n", "three", "\n", "The quick brown ", "fox", " jumps over the lazy ", "dog", "\n"]
     }
 
     void "node() returns zero or one matching element"() {
