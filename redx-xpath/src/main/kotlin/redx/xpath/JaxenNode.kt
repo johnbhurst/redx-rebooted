@@ -16,7 +16,7 @@ class JaxenNode(private val node: Node): XPathOperations {
 
     override fun text(expr: String): String? {
         val nodes = nodes(expr)
-        return if (nodes.isEmpty()) null else nodes.map {it.textContent}.joinToString("")
+        return if (nodes.isEmpty()) null else nodes.joinToString("") { it.textContent }
     }
 
     override fun node(expr: String): Node? {
