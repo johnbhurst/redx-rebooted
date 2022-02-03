@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.boot.runApplication
 import javax.persistence.EntityManager
 import javax.persistence.criteria.JoinType
 
@@ -18,10 +17,10 @@ open class Main @Autowired constructor(private val documentRepository: DocumentR
     private val log = LoggerFactory.getLogger(javaClass)
 
     override fun run(vararg args: String?) {
-        log.info("Hello, world")
-        findAll()
-        queryTransactionId()
-        querySearchTerm()
+//        log.info("Hello, world")
+//        findAll()
+//        queryTransactionId()
+//        querySearchTerm()
     }
 
     private fun findAll() {
@@ -80,6 +79,6 @@ open class Main @Autowired constructor(private val documentRepository: DocumentR
     }
 }
 
-fun main(args: Array<String>) {
-    runApplication<Main>(*args)
-}
+//fun main(args: Array<String>) {
+//    runApplication<Main>(*args)
+//}
