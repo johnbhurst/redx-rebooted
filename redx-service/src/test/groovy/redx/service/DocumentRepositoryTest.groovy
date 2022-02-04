@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
 
 import javax.annotation.Resource
+import java.time.LocalDateTime
 
 @SpringBootTest
 @ActiveProfiles(profiles = "test")
@@ -30,6 +31,19 @@ class DocumentRepositoryTest extends Specification {
         !documentOpt.empty
         def document = documentOpt.get()
         document.id == "d01"
+        document.fileName == "document01.xml"
+        document.fileSize == 1001
+        document.fileDate == LocalDateTime.parse("2022-01-01T10:00:01")
+        document.messageFrom == "FROM01"
+        document.fromDescription == "from01"
+        document.messageTo == "TO01"
+        document.toDescription == "to01"
+        document.messageId == "message001"
+        document.messageDate == LocalDateTime.parse("2022-02-01T11:00:01")
+        document.transactionGroup == "BAR"
+        document.priority == "Medium"
+        document.securityContext == "NEMMCO01"
+        document.market == "NEM"
     }
 
 

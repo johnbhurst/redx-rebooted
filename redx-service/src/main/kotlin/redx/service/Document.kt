@@ -26,7 +26,8 @@ class Document(
     @Column(nullable = true) val toDescription: String?,
     @Column(nullable = false) val messageId: String,
     @Column(nullable = false) val messageDate: LocalDateTime,
-    @Column(nullable = true) val priority: String?,
+    @Column(nullable = false) val transactionGroup: String, // TODO: enum?
+    @Column(nullable = true) val priority: String?, // TODO: enum?
     @Column(nullable = true) val securityContext: String?,
     @Column(nullable = true) val market: String?,
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, mappedBy = "document") val transactions: Set<Transaction>,
