@@ -31,12 +31,12 @@ class ParserTest extends Specification {
         return new Parser(tokens).parse()
     }
 
-    private static Expr expression(Expr... exprs) {
-        new Expr.Expression(exprs as List)
+    private static Expr and(Expr... exprs) {
+        new Expr.And(exprs as List)
     }
 
-    private static Expr factor(Expr... exprs) {
-        new Expr.Factor(exprs as List)
+    private static Expr or(Expr... exprs) {
+        new Expr.Or(exprs as List)
     }
 
     private static Expr composite(Expr expr) {
@@ -44,7 +44,7 @@ class ParserTest extends Specification {
     }
 
     private static Expr binary(String variable, BinaryOperator operator, Value value) {
-        new Expr.BinaryRestriction(variable, operator, value)
+        new Expr.BinaryExpression(variable, operator, value)
     }
 
     private static Expr not(Expr expr) {
@@ -88,14 +88,14 @@ class ParserTest extends Specification {
 
         where:
         input                                         || result
-        "a b c d"                                      | expression(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
-        "a AND b AND c AND d"                          | expression(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
-        "a b AND c AND d"                              | expression(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
-        "(a b) AND c AND d"                            | expression(composite(expression(stringRestriction("a"), stringRestriction("b"))), stringRestriction("c"), stringRestriction("d"))
-        "New York Giants OR Yankees"                   | expression(stringRestriction("New"), stringRestriction("York"), factor(stringRestriction("Giants"), stringRestriction("Yankees")))
-        "New York (Giants OR Yankees)"                 | expression(stringRestriction("New"), stringRestriction("York"), composite(factor(stringRestriction("Giants"), stringRestriction("Yankees"))))
-        "a < 10 OR a >= 100"                           | factor(binary("a", BinaryOperator.LESS_THAN, intValue(10)), binary("a", BinaryOperator.GREATER_EQUALS, intValue(100)))
-        "NOT (a OR b)"                                 | not(factor(stringRestriction("a"), stringRestriction("b")))
+        "a b c d"                                      | and(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
+        "a AND b AND c AND d"                          | and(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
+        "a b AND c AND d"                              | and(stringRestriction("a"), stringRestriction("b"), stringRestriction("c"), stringRestriction("d"))
+        "(a b) AND c AND d"                            | and(composite(and(stringRestriction("a"), stringRestriction("b"))), stringRestriction("c"), stringRestriction("d"))
+        "New York Giants OR Yankees"                   | and(stringRestriction("New"), stringRestriction("York"), or(stringRestriction("Giants"), stringRestriction("Yankees")))
+        "New York (Giants OR Yankees)"                 | and(stringRestriction("New"), stringRestriction("York"), composite(or(stringRestriction("Giants"), stringRestriction("Yankees"))))
+        "a < 10 OR a >= 100"                           | or(binary("a", BinaryOperator.LESS_THAN, intValue(10)), binary("a", BinaryOperator.GREATER_EQUALS, intValue(100)))
+        "NOT (a OR b)"                                 | not(or(stringRestriction("a"), stringRestriction("b")))
         "-file:\".java\""                              | not(stringRestriction("file:\".java\""))
         "-30"                                          | not(stringRestriction("30"))
         "package=com.google"                           | binary("package", BinaryOperator.EQUALS, stringValue("com.google"))
@@ -120,20 +120,20 @@ class ParserTest extends Specification {
         input                                                                            || result
         "6012345678"                                                                      | stringRestriction("6012345678")
 //        "6012345678 CATS"                                                                 | sequence(value("6012345678"), value("CATS"))
-        "6012345678 AND CATS"                                                             | expression(stringRestriction("6012345678"), stringRestriction("CATS"))
+        "6012345678 AND CATS"                                                             | and(stringRestriction("6012345678"), stringRestriction("CATS"))
         "fileName=NEMMSATS_MDMReportRM16_r39_p1.xml"                                      | binary("fileName", BinaryOperator.EQUALS, stringValue("NEMMSATS_MDMReportRM16_r39_p1.xml"))
         "transactionGroup=CATS"                                                           | binary("transactionGroup", BinaryOperator.EQUALS, stringValue("CATS"))
         "transactionType=CATSNotification"                                                | binary("transactionType", BinaryOperator.EQUALS, stringValue("CATSNotification"))
 //        "6012345678 transactionGroup='CATS'"                                              | sequence(value("6012345678"), binary(variable("transactionGroup"), BinaryOperator.EQUALS, value("CATS")))
-        "transactionGroup=CATS AND 6012345678"                                            | expression(binary("transactionGroup", BinaryOperator.EQUALS, stringValue("CATS")), stringRestriction("6012345678"))
-        "6012345678 OR 6087654321"                                                        | factor(stringRestriction("6012345678"), stringRestriction("6087654321"))
+        "transactionGroup=CATS AND 6012345678"                                            | and(binary("transactionGroup", BinaryOperator.EQUALS, stringValue("CATS")), stringRestriction("6012345678"))
+        "6012345678 OR 6087654321"                                                        | or(stringRestriction("6012345678"), stringRestriction("6087654321"))
         "market != \"NEM\""                                                               | binary("market", BinaryOperator.NOT_EQUALS, stringValue("NEM"))
         "-6012345678"                                                                     | not(stringRestriction("6012345678"))
         "NOT market=\"NEM\""                                                              | not(binary("market", BinaryOperator.EQUALS, stringValue("NEM")))
         "fileSize > 1000"                                                                 | binary("fileSize", BinaryOperator.GREATER_THAN, intValue(1000))
-        "uploadDate >= 2022-01-01T00:00:00 AND uploadDate < 2022-02-01"                   | expression(binary("uploadDate", BinaryOperator.GREATER_EQUALS, dateTimeValue("2022-01-01T00:00:00")), binary("uploadDate", BinaryOperator.LESS_THAN, dateValue("2022-02-01")))
+        "uploadDate >= 2022-01-01T00:00:00 AND uploadDate < 2022-02-01"                   | and(binary("uploadDate", BinaryOperator.GREATER_EQUALS, dateTimeValue("2022-01-01T00:00:00")), binary("uploadDate", BinaryOperator.LESS_THAN, dateValue("2022-02-01")))
         "txn.transactionID = 'transaction0001'"                                           | binary("txn.transactionID", BinaryOperator.EQUALS, stringValue("transaction0001"))
-        "txn.transactionDate >= 2022-01-01T00:00:00 AND txn.transactionDate < 2022-02-01" | expression(binary("txn.transactionDate", BinaryOperator.GREATER_EQUALS, dateTimeValue("2022-01-01T00:00:00")), binary("txn.transactionDate", BinaryOperator.LESS_THAN, dateValue("2022-02-01")))
+        "txn.transactionDate >= 2022-01-01T00:00:00 AND txn.transactionDate < 2022-02-01" | and(binary("txn.transactionDate", BinaryOperator.GREATER_EQUALS, dateTimeValue("2022-01-01T00:00:00")), binary("txn.transactionDate", BinaryOperator.LESS_THAN, dateValue("2022-02-01")))
 //        "transactionGroup=CATS 6012345678 OR 6087654321"                                  | sequence(binary(variable("transactionGroup"), BinaryOperator.EQUALS, value("CATS")), factor(value("6012345678"), value("6087654321")))
 //        "(transactionGroup=CATS 6012345678) OR 6087654321"                                | factor(composite(sequence(binary(variable("transactionGroup"), BinaryOperator.EQUALS, value("CATS")), value("6012345678")), value("6087654321")))
         "MeterDataNotification.VersionHeader=NEM12"                                       | binary("MeterDataNotification.VersionHeader", BinaryOperator.EQUALS, stringValue("NEM12"))

@@ -67,7 +67,7 @@ class Parser(private val tokens: List<Token>) {
         while (match(AND)) {
             resultList += sequence()
         }
-        return Expr.Expression(resultList)
+        return Expr.And(resultList)
     }
 
     // sequence : factor {factor}
@@ -85,7 +85,7 @@ class Parser(private val tokens: List<Token>) {
         while (match(OR)) {
             resultList += term()
         }
-        return Expr.Factor(resultList)
+        return Expr.Or(resultList)
     }
 
     // term : [(NOT | MINUS)] simple
@@ -132,7 +132,7 @@ class Parser(private val tokens: List<Token>) {
                     match(INTEGER) -> Value.IntegerValue(previous().literal as Int)
                     else -> throw RuntimeException("Unexpected value")
                 }
-                Expr.BinaryRestriction(lhs, operator, value)
+                Expr.BinaryExpression(lhs, operator, value)
             } else {
                 Expr.StringRestriction(lhs)
             }

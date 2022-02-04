@@ -10,12 +10,10 @@ package redx.filter
  * @link https://craftinginterpreters.com/
  */
 interface Expr {
-    data class Expression(val sequences: List<Expr>) : Expr
-    data class Sequence(val factors: List<Expr>) : Expr
-    data class Factor(val terms: List<Expr>) : Expr
-    data class Term(val expr: Expr) : Expr
+    data class And(val sequences: List<Expr>) : Expr
+    data class Or(val terms: List<Expr>) : Expr
     data class Not(val expr: Expr) : Expr
     data class StringRestriction(val value: String) : Expr
-    data class BinaryRestriction(val variable: String, val operator: BinaryOperator, val value: Value) : Expr
+    data class BinaryExpression(val variable: String, val operator: BinaryOperator, val value: Value) : Expr
     data class Composite(val expr: Expr) : Expr
 }
