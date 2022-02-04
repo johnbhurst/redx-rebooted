@@ -68,17 +68,22 @@ VALUES ('t1601', 'd16', TIMESTAMP '2022-03-01 12:16:01', 'trans1601', 'init1601'
 INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
 VALUES ('d17', 'document17.xml', 1017, TIMESTAMP '2022-01-01 10:00:17', 'FROM17', 'from17', 'TO17', 'to17', 'message017', TIMESTAMP '2022-02-01 11:00:17', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
 INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
-VALUES ('d18', 'document18.xml', 1018, TIMESTAMP '2022-01-01 10:00:18', 'FROM18', 'from18', 'TO18', 'to17', 'message018', TIMESTAMP '2022-02-01 11:00:18', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+VALUES ('d18', 'document18.xml', 1018, TIMESTAMP '2022-01-01 10:00:18', 'FROM18', 'from18', 'TO18', 'to18', 'message018', TIMESTAMP '2022-02-01 11:00:18', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d19', 'document19.xml', 1019, TIMESTAMP '2022-01-01 10:00:19', 'FROM19', 'from19', 'TO19', 'to19', 'message019', TIMESTAMP '2022-02-01 11:00:19', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
 
 INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
 VALUES ('t1701', 'd17', TIMESTAMP '2022-03-01 12:17:01', 'trans1701', 'init1701', 'CATSNotification');
 INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
 VALUES ('t1801', 'd18', TIMESTAMP '2022-03-01 12:18:01', 'trans1801', 'init1801', 'CATSNotification');
-
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1901', 'd19', TIMESTAMP '2022-03-01 12:19:01', 'trans1901', 'init1901', 'CATSNotification');
 
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701b');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801b');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'term1901a');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'term1901b');
 
 COMMIT WORK;
