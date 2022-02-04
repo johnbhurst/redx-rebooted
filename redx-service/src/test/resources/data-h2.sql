@@ -39,17 +39,46 @@ VALUES ('d11', 'document11.xml', 1011, TIMESTAMP '2022-01-01 10:00:11', 'FROM11'
 INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
 VALUES ('d12', 'document12.xml', 1012, TIMESTAMP '2022-01-01 10:00:12', 'FROM12', 'from12', 'TO12', 'to12', 'message012', TIMESTAMP '2022-02-01 11:00:12', 'MDMT', 'Medium', 'NEMMCO12', 'VICGAS');
 
-INSERT INTO transaction (id, document, transaction_date, transaction_id, transaction_name)
-VALUES ('t0101', 'd01', TIMESTAMP '2002-01-01 12:00:00', 'XXX', 'CATSNotification');
-INSERT INTO transaction (id, document, transaction_date, transaction_id, transaction_name)
-VALUES ('t0102', 'd01', TIMESTAMP '2002-01-02 12:00:00', 'YYY', 'CATSNotification');
+-- transactions
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d13', 'document13.xml', 1013, TIMESTAMP '2022-01-01 10:00:13', 'FROM13', 'from13', 'TO13', 'to13', 'message013', TIMESTAMP '2022-02-01 11:00:13', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d14', 'document14.xml', 1014, TIMESTAMP '2022-01-01 10:00:14', 'FROM14', 'from14', 'TO14', 'to14', 'message014', TIMESTAMP '2022-02-01 11:00:14', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d15', 'document15.xml', 1015, TIMESTAMP '2022-01-01 10:00:15', 'FROM15', 'from15', 'TO15', 'to15', 'message015', TIMESTAMP '2022-02-01 11:00:15', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d16', 'document16.xml', 1016, TIMESTAMP '2022-01-01 10:00:16', 'FROM16', 'from16', 'TO16', 'to16', 'message016', TIMESTAMP '2022-02-01 11:00:16', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
 
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0101', '123456789012345');
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0101', '8374635465');
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0101', 'AGEDDEBT');
+-- transaction_date
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1301', 'd13', TIMESTAMP '2022-03-01 12:13:01', 'trans1301', 'init1301', 'CATSNotification');
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1302', 'd13', TIMESTAMP '2022-03-01 12:13:02', 'trans1302', 'init1302', 'CATSNotification');
+-- transaction_id
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1401', 'd14', TIMESTAMP '2022-03-01 12:14:01', 'trans1401', 'init1401', 'CATSNotification');
+-- initiating_transaction_id
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1501', 'd15', TIMESTAMP '2022-03-01 12:15:01', 'trans1501', 'init1501', 'CATSNotification');
+-- transaction name
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1601', 'd16', TIMESTAMP '2022-03-01 12:16:01', 'trans1601', 'init1601', 'CATSChangeRequest');
 
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0102', '123456789012346');
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0102', '8374635465');
-INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t0102', 'AGEDDEBT');
+-- search terms
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d17', 'document17.xml', 1017, TIMESTAMP '2022-01-01 10:00:17', 'FROM17', 'from17', 'TO17', 'to17', 'message017', TIMESTAMP '2022-02-01 11:00:17', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+INSERT INTO document (id, file_name, file_size, file_date, message_from, from_description, message_to, to_description, message_id, message_date, transaction_group, priority, security_context, market)
+VALUES ('d18', 'document18.xml', 1018, TIMESTAMP '2022-01-01 10:00:18', 'FROM18', 'from18', 'TO18', 'to17', 'message018', TIMESTAMP '2022-02-01 11:00:18', 'CATS', 'Medium', 'NEMMCO01', 'NEM');
+
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1701', 'd17', TIMESTAMP '2022-03-01 12:17:01', 'trans1701', 'init1701', 'CATSNotification');
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1801', 'd18', TIMESTAMP '2022-03-01 12:18:01', 'trans1801', 'init1801', 'CATSNotification');
+
+
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701a');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701b');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801a');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801b');
 
 COMMIT WORK;

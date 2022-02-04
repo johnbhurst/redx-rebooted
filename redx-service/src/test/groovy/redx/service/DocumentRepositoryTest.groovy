@@ -7,6 +7,7 @@ package redx.service
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.test.context.ActiveProfiles
 import spock.lang.Specification
+import spock.lang.Unroll
 
 import javax.annotation.Resource
 import java.time.LocalDateTime
@@ -46,13 +47,22 @@ class DocumentRepositoryTest extends Specification {
         document.market == "NEM"
     }
 
-
     def "Repository findAll() returns all documents"() {
         when:
         def documents = repository.findAll().sort { it.id }
 
         then:
-        documents*.id == ["d01", "d02", "d03", "d04", "d05", "d06", "d07", "d08", "d09", "d10", "d11", "d12"]
+        documents*.id == ["d01", "d02", "d03", "d04", "d05", "d06", "d07", "d08", "d09", "d10", "d11", "d12", "d13", "d14", "d15", "d16", "d17", "d18"]
+    }
+
+    @Unroll
+    def "Repository findForFilter(#filter) returns documents #result"() {
+        expect:
+        repository.findForFilter(filter).sort { it.id }*.id == result
+
+        where:
+        filter      || result
+        "term1701a" | ["d17"]
     }
 }
 
