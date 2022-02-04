@@ -81,9 +81,15 @@ VALUES ('t1901', 'd19', TIMESTAMP '2022-03-01 12:19:01', 'trans1901', 'init1901'
 
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701b');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'common1718');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'common1719');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801b');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'common1718');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'common1819');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'term1901a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'term1901b');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'common1719');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1901', 'common1819');
 
 COMMIT WORK;
