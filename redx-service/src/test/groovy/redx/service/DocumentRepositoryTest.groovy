@@ -22,15 +22,23 @@ class DocumentRepositoryTest extends Specification {
         repository
     }
 
-    def "Repository findAll() returns all documents"() {
+    def "findById() returns all fields"() {
         when:
-        def documents = repository.findAll()
-        def (txn1, txn2) = documents[0].transactions
+        def documentOpt = repository.findById("d01")
 
         then:
-        documents*.id == ["d1"]
-        txn1.id == "t1"
-        txn2.id == "t2"
+        !documentOpt.empty
+        def document = documentOpt.get()
+        document.id == "d01"
+    }
+
+
+    def "Repository findAll() returns all documents"() {
+        when:
+        def documents = repository.findAll().sort { it.id }
+
+        then:
+        documents*.id == ["d01", "d02", "d03", "d04", "d05", "d06", "d07", "d08", "d09", "d10", "d11", "d12"]
     }
 }
 
