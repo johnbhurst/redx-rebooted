@@ -62,17 +62,6 @@ class DocumentRepositoryTest extends Specification {
 
         where:
         filter                                                               || result
-        "term1701a"                                                           | ["d17"]
-        "term1701b"                                                           | ["d17"]
-        "term1801a"                                                           | ["d18"]
-        "common1718"                                                          | ["d17", "d18"]
-        "common1719"                                                          | ["d17", "d19"]
-        "common1819"                                                          | ["d18", "d19"]
-        "common1718 AND common1819"                                           | ["d18"]
-        "common1718 AND NOT term1701a"                                        | ["d18"]
-        "term1701a OR term1801a"                                              | ["d17", "d18"]
-        "(common1718 OR common1819)"                                          | ["d17", "d18", "d19"]
-        "(common1718 OR common1819) AND NOT term1801a"                        | ["d17", "d19"]
         "fileName = 'document01.xml'"                                         | ["d01"]
         "fileName <= 'document02.xml'"                                        | ["d01", "d02"]
         "fileSize = 1002"                                                     | ["d02"]
@@ -93,6 +82,17 @@ class DocumentRepositoryTest extends Specification {
         "txn.transactionId = 'trans1401'"                                     | ["d14"]
         "txn.initiatingTransactionId = 'init1501'"                            | ["d15"]
         "txn.transactionName = 'CATSChangeRequest'"                           | ["d16"]
+        "term1701a"                                                           | ["d17"]
+        "term1701b"                                                           | ["d17"]
+        "term1801a"                                                           | ["d18"]
+        "common1718"                                                          | ["d17", "d18"]
+        "common1719"                                                          | ["d17", "d19"]
+        "common1819"                                                          | ["d18", "d19"]
+        "common1718 AND common1819"                                           | ["d18"]
+        "common1718 AND NOT term1701a"                                        | ["d18"]
+        "term1701a OR term1801a"                                              | ["d17", "d18"]
+        "(common1718 OR common1819)"                                          | ["d17", "d18", "d19"]
+        "(common1718 OR common1819) AND NOT term1801a"                        | ["d17", "d19"]
     }
 }
 
