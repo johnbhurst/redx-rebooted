@@ -75,6 +75,8 @@ VALUES ('d19', 'document19.xml', 1019, TIMESTAMP '2022-01-01 10:00:19', 'FROM19'
 INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
 VALUES ('t1701', 'd17', TIMESTAMP '2022-03-01 12:17:01', 'trans1701', 'init1701', 'CATSNotification');
 INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
+VALUES ('t1702', 'd17', TIMESTAMP '2022-03-01 12:17:02', 'trans1702', 'init1702', 'CATSNotification');
+INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
 VALUES ('t1801', 'd18', TIMESTAMP '2022-03-01 12:18:01', 'trans1801', 'init1801', 'CATSNotification');
 INSERT INTO transaction (id, document, transaction_date, transaction_id, initiating_transaction_id, transaction_name)
 VALUES ('t1901', 'd19', TIMESTAMP '2022-03-01 12:19:01', 'trans1901', 'init1901', 'CATSNotification');
@@ -83,6 +85,8 @@ INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'term1701b');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'common1718');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1701', 'common1719');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1702', 'term1702a');
+INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1702', 'term1702b');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801a');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'term1801b');
 INSERT INTO transaction_search_term (transaction, search_term) VALUES ('t1801', 'common1718');

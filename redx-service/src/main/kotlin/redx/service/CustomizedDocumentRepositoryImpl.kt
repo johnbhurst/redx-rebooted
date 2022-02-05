@@ -14,23 +14,35 @@ import javax.annotation.Resource
 import javax.persistence.EntityManager
 import javax.persistence.TypedQuery
 import javax.persistence.criteria.CriteriaBuilder
+import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Expression
 import javax.persistence.criteria.JoinType
 import javax.persistence.criteria.Root
-import javax.persistence.criteria.SetJoin
 
 class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManager) : CustomizedDocumentRepository {
 
-    class PredicateBuilder(val criteriaBuilder: CriteriaBuilder, documentRoot: Root<Document>) {
-        val transactions: SetJoin<Document, Transaction> = documentRoot.joinSet<Document, Transaction>("transactions", JoinType.LEFT)
-        val searchTerms: SetJoin<Transaction, String> = transactions.joinSet<Transaction, String>("searchTerms", JoinType.LEFT)
+    class PredicateBuilder(
+        private val criteriaBuilder: CriteriaBuilder,
+        private val criteriaQuery: CriteriaQuery<Document>,
+        private val documentRoot: Root<Document>
+    ) {
 
         fun build(expr: Expr): Expression<Boolean> {
-            when (expr) {
-                is Expr.StringRestriction -> return criteriaBuilder.`in`(criteriaBuilder.literal(expr.value)).value(searchTerms)
-                else -> return TODO("case not yet implemented")
+            return when (expr) {
+                is Expr.And -> expr.sequences.map(::build).reduce(criteriaBuilder::and)
+                is Expr.Or -> expr.terms.map(::build).reduce(criteriaBuilder::or)
+                is Expr.Not -> criteriaBuilder.not(build(expr.expr))
+                is Expr.StringRestriction -> searchTermExpr(expr.value)
+                else -> TODO("case not yet implemented")
             }
+        }
 
+        private fun searchTermExpr(value: String) : Expression<Boolean> {
+            val searchQuery = criteriaQuery.subquery(String::class.java)
+            val transactions = searchQuery.from(Transaction::class.java)
+            val searchTerms = transactions.joinSet<Transaction, String>("searchTerms", JoinType.LEFT)
+            searchQuery.select(transactions.get("document")).where(criteriaBuilder.equal(searchTerms, criteriaBuilder.literal(value)))
+            return criteriaBuilder.`in`(documentRoot.get<String>("id")).value(searchQuery)
         }
     }
 
@@ -40,14 +52,13 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         val documentRoot: Root<Document> = criteriaQuery.from(Document::class.java)
         val tokens = Scanner(filter).scanTokens()
         val expr = Parser(tokens).parse()
-        val predicate = PredicateBuilder(criteriaBuilder, documentRoot).build(expr)
+        val predicate = PredicateBuilder(criteriaBuilder, criteriaQuery, documentRoot).build(expr)
         criteriaQuery.select(documentRoot).where(predicate)
         return entityManager.createQuery(criteriaQuery)
     }
 
     override fun findForFilter(filter: String): Iterable<Document> {
-        val query = createQuery(filter)
-        return query.resultList
+        return createQuery(filter).resultList
     }
 
     override fun findForFilter(filter: String, sort: Sort): Iterable<Document> {
