@@ -20,15 +20,18 @@ import javax.persistence.TypedQuery
 import javax.persistence.criteria.CriteriaBuilder
 import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.Expression
+import javax.persistence.criteria.From
 import javax.persistence.criteria.JoinType
 import javax.persistence.criteria.Root
+import javax.persistence.criteria.SetJoin
 
 class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManager) : CustomizedDocumentRepository {
 
     class PredicateBuilder(
         private val criteriaBuilder: CriteriaBuilder,
         private val criteriaQuery: CriteriaQuery<Document>,
-        private val documentRoot: Root<Document>
+        private val documentRoot: Root<Document>,
+        private val transactions: SetJoin<Document, Transaction>,
     ) {
 
         fun build(expr: Expr): Expression<Boolean> {
@@ -45,63 +48,67 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
 
         private fun binaryExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             when (variable) {
-                "fileName" -> stringExpr(variable, operator, value)
-                "fileSize" -> integerExpr(variable, operator, value)
-                "fileDate" -> dateTimeExpr(variable, operator, value)
-                "messageFrom" -> stringExpr(variable, operator, value)
-                "fromDescription" -> stringExpr(variable, operator, value)
-                "messageTo" -> stringExpr(variable, operator, value)
-                "toDescription" -> stringExpr(variable, operator, value)
-                "messageId" -> stringExpr(variable, operator, value)
-                "messageDate" -> dateTimeExpr(variable, operator, value)
-                "transactionGroup" -> stringExpr(variable, operator, value)
-                "priority" -> stringExpr(variable, operator, value)
-                "market" -> stringExpr(variable, operator, value)
+                "fileName" -> stringExpr(documentRoot, variable, operator, value)
+                "fileSize" -> integerExpr(documentRoot, variable, operator, value)
+                "fileDate" -> dateTimeExpr(documentRoot, variable, operator, value)
+                "messageFrom" -> stringExpr(documentRoot, variable, operator, value)
+                "fromDescription" -> stringExpr(documentRoot, variable, operator, value)
+                "messageTo" -> stringExpr(documentRoot, variable, operator, value)
+                "toDescription" -> stringExpr(documentRoot, variable, operator, value)
+                "messageId" -> stringExpr(documentRoot, variable, operator, value)
+                "messageDate" -> dateTimeExpr(documentRoot, variable, operator, value)
+                "transactionGroup" -> stringExpr(documentRoot, variable, operator, value)
+                "priority" -> stringExpr(documentRoot, variable, operator, value)
+                "market" -> stringExpr(documentRoot, variable, operator, value)
+                "txn.transactionDate" -> dateTimeExpr(transactions, "transactionDate", operator, value)
+                "txn.transactionId" -> stringExpr(transactions, "transactionId", operator, value)
+                "txn.initiatingTransactionId" -> stringExpr(transactions, "initiatingTransactionId", operator, value)
+                "txn.transactionName" -> stringExpr(transactions, "transactionName", operator, value)
                 else -> throw RuntimeException("Unsupported variable $variable")
             }
 
-        private fun stringExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+        private fun <X,Y> stringExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             if (value is Value.StringValue) when (operator) {
-                EQUALS -> criteriaBuilder.equal(documentRoot.get<String>(variable), value.value)
-                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(documentRoot.get(variable), value.value)
-                GREATER_THAN -> criteriaBuilder.greaterThan(documentRoot.get(variable), value.value)
-                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(documentRoot.get(variable), value.value)
-                LESS_THAN -> criteriaBuilder.lessThan(documentRoot.get(variable), value.value)
-                NOT_EQUALS -> criteriaBuilder.notEqual(documentRoot.get<String>(variable), value.value)
+                EQUALS -> criteriaBuilder.equal(target.get<String>(variable), value.value)
+                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(target.get(variable), value.value)
+                GREATER_THAN -> criteriaBuilder.greaterThan(target.get(variable), value.value)
+                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(target.get(variable), value.value)
+                LESS_THAN -> criteriaBuilder.lessThan(target.get(variable), value.value)
+                NOT_EQUALS -> criteriaBuilder.notEqual(target.get<String>(variable), value.value)
             } else {
                 throw RuntimeException("Expected string value for $variable, got ${value.javaClass.simpleName}")
             }
 
-        private fun integerExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+        private fun <X,Y> integerExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             if (value is Value.IntegerValue) when (operator) {
-                EQUALS -> criteriaBuilder.equal(documentRoot.get<Int>(variable), value.value)
-                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(documentRoot.get(variable), value.value)
-                GREATER_THAN -> criteriaBuilder.greaterThan(documentRoot.get(variable), value.value)
-                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(documentRoot.get(variable), value.value)
-                LESS_THAN -> criteriaBuilder.lessThan(documentRoot.get(variable), value.value)
-                NOT_EQUALS -> criteriaBuilder.notEqual(documentRoot.get<Int>(variable), value.value)
+                EQUALS -> criteriaBuilder.equal(target.get<Int>(variable), value.value)
+                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(target.get(variable), value.value)
+                GREATER_THAN -> criteriaBuilder.greaterThan(target.get(variable), value.value)
+                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(target.get(variable), value.value)
+                LESS_THAN -> criteriaBuilder.lessThan(target.get(variable), value.value)
+                NOT_EQUALS -> criteriaBuilder.notEqual(target.get<Int>(variable), value.value)
             } else {
                 throw RuntimeException("Expected integer value for $variable, got ${value.javaClass.simpleName}")
             }
 
-        private fun dateTimeExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+        private fun <X,Y> dateTimeExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             if (value is Value.DateTimeValue) when (operator) {
-                EQUALS -> criteriaBuilder.equal(documentRoot.get<LocalDateTime>(variable), value.value)
-                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(documentRoot.get(variable), value.value)
-                GREATER_THAN -> criteriaBuilder.greaterThan(documentRoot.get(variable), value.value)
-                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(documentRoot.get(variable), value.value)
-                LESS_THAN -> criteriaBuilder.lessThan(documentRoot.get(variable), value.value)
-                NOT_EQUALS -> criteriaBuilder.notEqual(documentRoot.get<LocalDateTime>(variable), value.value)
+                EQUALS -> criteriaBuilder.equal(target.get<LocalDateTime>(variable), value.value)
+                GREATER_EQUALS -> criteriaBuilder.greaterThanOrEqualTo(target.get(variable), value.value)
+                GREATER_THAN -> criteriaBuilder.greaterThan(target.get(variable), value.value)
+                LESS_EQUALS -> criteriaBuilder.lessThanOrEqualTo(target.get(variable), value.value)
+                LESS_THAN -> criteriaBuilder.lessThan(target.get(variable), value.value)
+                NOT_EQUALS -> criteriaBuilder.notEqual(target.get<LocalDateTime>(variable), value.value)
             } else {
                 throw RuntimeException("Expected datetime value for $variable, got ${value.javaClass.simpleName}")
             }
 
         private fun searchTermExpr(value: String) : Expression<Boolean> {
             val searchQuery = criteriaQuery.subquery(String::class.java)
-            val transactions = searchQuery.from(Transaction::class.java)
-            val searchTerms = transactions.joinSet<Transaction, String>("searchTerms", JoinType.LEFT)
-            searchQuery.select(transactions.get("document")).where(criteriaBuilder.equal(searchTerms, criteriaBuilder.literal(value)))
-            return criteriaBuilder.`in`(documentRoot.get<String>("id")).value(searchQuery)
+            val transactionsSubJoin = searchQuery.correlate(transactions)
+            val searchTerms = transactionsSubJoin.joinSet<Transaction, String>("searchTerms", JoinType.LEFT)
+            searchQuery.select(searchTerms).where(criteriaBuilder.equal(searchTerms, criteriaBuilder.literal(value)))
+            return criteriaBuilder.exists(searchQuery)
         }
     }
 
@@ -109,10 +116,13 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         val criteriaBuilder: CriteriaBuilder = entityManager.criteriaBuilder
         val criteriaQuery = criteriaBuilder.createQuery(Document::class.java)
         val documentRoot: Root<Document> = criteriaQuery.from(Document::class.java)
+        val transactions = documentRoot.joinSet<Document, Transaction>("transactions", JoinType.LEFT)
         val tokens = Scanner(filter).scanTokens()
         val expr = Parser(tokens).parse()
-        val predicate = PredicateBuilder(criteriaBuilder, criteriaQuery, documentRoot).build(expr)
-        criteriaQuery.select(documentRoot).where(predicate)
+        val predicate = PredicateBuilder(criteriaBuilder, criteriaQuery, documentRoot, transactions).build(expr)
+        criteriaQuery.select(documentRoot)
+            .where(predicate)
+            .distinct(true)
         return entityManager.createQuery(criteriaQuery)
     }
 

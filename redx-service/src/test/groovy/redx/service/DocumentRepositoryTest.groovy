@@ -89,6 +89,10 @@ class DocumentRepositoryTest extends Specification {
         "priority = 'Low'"                                                    | ["d11"]
         "market = 'VICGAS'"                                                   | ["d12"]
         "market != 'NEM'"                                                     | ["d09", "d10", "d12"]
+        "txn.transactionDate = 2022-03-01T12:13:01"                           | ["d13"]
+        "txn.transactionId = 'trans1401'"                                     | ["d14"]
+        "txn.initiatingTransactionId = 'init1501'"                            | ["d15"]
+        "txn.transactionName = 'CATSChangeRequest'"                           | ["d16"]
     }
 }
 

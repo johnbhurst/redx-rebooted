@@ -24,7 +24,7 @@ ALTER TABLE document ADD CONSTRAINT document_pk PRIMARY KEY (id);
 CREATE TABLE transaction (
     id VARCHAR(50) NOT NULL,
     document VARCHAR(50) NOT NULL,
-    transaction_date DATE NOT NULL,
+    transaction_date TIMESTAMP NOT NULL,
     transaction_id VARCHAR(36) NOT NULL,
     initiating_transaction_id VARCHAR(36),
     transaction_name VARCHAR(50) NOT NULL
