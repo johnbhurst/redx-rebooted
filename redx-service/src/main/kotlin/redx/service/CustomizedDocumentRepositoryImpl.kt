@@ -30,7 +30,7 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
     class PredicateBuilder(
         private val criteriaBuilder: CriteriaBuilder,
         private val criteriaQuery: CriteriaQuery<Document>,
-        private val documentRoot: Root<Document>,
+        private val document: Root<Document>,
         private val transactions: SetJoin<Document, Transaction>,
     ) {
 
@@ -48,18 +48,18 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
 
         private fun binaryExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             when (variable) {
-                "fileName" -> stringExpr(documentRoot, variable, operator, value)
-                "fileSize" -> integerExpr(documentRoot, variable, operator, value)
-                "fileDate" -> dateTimeExpr(documentRoot, variable, operator, value)
-                "messageFrom" -> stringExpr(documentRoot, variable, operator, value)
-                "fromDescription" -> stringExpr(documentRoot, variable, operator, value)
-                "messageTo" -> stringExpr(documentRoot, variable, operator, value)
-                "toDescription" -> stringExpr(documentRoot, variable, operator, value)
-                "messageId" -> stringExpr(documentRoot, variable, operator, value)
-                "messageDate" -> dateTimeExpr(documentRoot, variable, operator, value)
-                "transactionGroup" -> stringExpr(documentRoot, variable, operator, value)
-                "priority" -> stringExpr(documentRoot, variable, operator, value)
-                "market" -> stringExpr(documentRoot, variable, operator, value)
+                "fileName" -> stringExpr(document, variable, operator, value)
+                "fileSize" -> integerExpr(document, variable, operator, value)
+                "fileDate" -> dateTimeExpr(document, variable, operator, value)
+                "messageFrom" -> stringExpr(document, variable, operator, value)
+                "fromDescription" -> stringExpr(document, variable, operator, value)
+                "messageTo" -> stringExpr(document, variable, operator, value)
+                "toDescription" -> stringExpr(document, variable, operator, value)
+                "messageId" -> stringExpr(document, variable, operator, value)
+                "messageDate" -> dateTimeExpr(document, variable, operator, value)
+                "transactionGroup" -> stringExpr(document, variable, operator, value)
+                "priority" -> stringExpr(document, variable, operator, value)
+                "market" -> stringExpr(document, variable, operator, value)
                 "txn.transactionDate" -> dateTimeExpr(transactions, "transactionDate", operator, value)
                 "txn.transactionId" -> stringExpr(transactions, "transactionId", operator, value)
                 "txn.initiatingTransactionId" -> stringExpr(transactions, "initiatingTransactionId", operator, value)
@@ -113,14 +113,14 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
     }
 
     private fun createQuery(filter: String): TypedQuery<Document> {
-        val criteriaBuilder: CriteriaBuilder = entityManager.criteriaBuilder
+        val criteriaBuilder = entityManager.criteriaBuilder
         val criteriaQuery = criteriaBuilder.createQuery(Document::class.java)
-        val documentRoot: Root<Document> = criteriaQuery.from(Document::class.java)
-        val transactions = documentRoot.joinSet<Document, Transaction>("transactions", JoinType.LEFT)
+        val document = criteriaQuery.from(Document::class.java)
+        val transactions = document.joinSet<Document, Transaction>("transactions", JoinType.LEFT)
         val tokens = Scanner(filter).scanTokens()
         val expr = Parser(tokens).parse()
-        val predicate = PredicateBuilder(criteriaBuilder, criteriaQuery, documentRoot, transactions).build(expr)
-        criteriaQuery.select(documentRoot)
+        val predicate = PredicateBuilder(criteriaBuilder, criteriaQuery, document, transactions).build(expr)
+        criteriaQuery.select(document)
             .where(predicate)
             .distinct(true)
         return entityManager.createQuery(criteriaQuery)
