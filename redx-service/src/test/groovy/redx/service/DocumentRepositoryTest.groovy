@@ -61,16 +61,18 @@ class DocumentRepositoryTest extends Specification {
         repository.findForFilter(filter).sort { it.id }*.id == result
 
         where:
-        filter                        || result
-        "term1701a"                    | ["d17"]
-        "term1701b"                    | ["d17"]
-        "term1801a"                    | ["d18"]
-        "common1718"                   | ["d17", "d18"]
-        "common1719"                   | ["d17", "d19"]
-        "common1819"                   | ["d18", "d19"]
-        "common1718 AND common1819"    | ["d18"]
-        "common1718 AND NOT term1701a" | ["d18"]
-        "term1701a OR term1801a"       | ["d17", "d18"]
+        filter                                          || result
+        "term1701a"                                      | ["d17"]
+        "term1701b"                                      | ["d17"]
+        "term1801a"                                      | ["d18"]
+        "common1718"                                     | ["d17", "d18"]
+        "common1719"                                     | ["d17", "d19"]
+        "common1819"                                     | ["d18", "d19"]
+        "common1718 AND common1819"                      | ["d18"]
+        "common1718 AND NOT term1701a"                   | ["d18"]
+        "term1701a OR term1801a"                         | ["d17", "d18"]
+        "(common1718 OR common1819)"                     | ["d17", "d18", "d19"]
+        "(common1718 OR common1819) AND NOT term1801a"   | ["d17", "d19"]
     }
 }
 

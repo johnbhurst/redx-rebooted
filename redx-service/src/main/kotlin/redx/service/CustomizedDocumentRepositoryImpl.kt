@@ -32,6 +32,7 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
                 is Expr.And -> expr.sequences.map(::build).reduce(criteriaBuilder::and)
                 is Expr.Or -> expr.terms.map(::build).reduce(criteriaBuilder::or)
                 is Expr.Not -> criteriaBuilder.not(build(expr.expr))
+                is Expr.Composite -> build(expr.expr)
                 is Expr.StringRestriction -> searchTermExpr(expr.value)
                 else -> TODO("case not yet implemented")
             }
