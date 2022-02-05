@@ -61,18 +61,34 @@ class DocumentRepositoryTest extends Specification {
         repository.findForFilter(filter).sort { it.id }*.id == result
 
         where:
-        filter                                          || result
-        "term1701a"                                      | ["d17"]
-        "term1701b"                                      | ["d17"]
-        "term1801a"                                      | ["d18"]
-        "common1718"                                     | ["d17", "d18"]
-        "common1719"                                     | ["d17", "d19"]
-        "common1819"                                     | ["d18", "d19"]
-        "common1718 AND common1819"                      | ["d18"]
-        "common1718 AND NOT term1701a"                   | ["d18"]
-        "term1701a OR term1801a"                         | ["d17", "d18"]
-        "(common1718 OR common1819)"                     | ["d17", "d18", "d19"]
-        "(common1718 OR common1819) AND NOT term1801a"   | ["d17", "d19"]
+        filter                                                               || result
+        "term1701a"                                                           | ["d17"]
+        "term1701b"                                                           | ["d17"]
+        "term1801a"                                                           | ["d18"]
+        "common1718"                                                          | ["d17", "d18"]
+        "common1719"                                                          | ["d17", "d19"]
+        "common1819"                                                          | ["d18", "d19"]
+        "common1718 AND common1819"                                           | ["d18"]
+        "common1718 AND NOT term1701a"                                        | ["d18"]
+        "term1701a OR term1801a"                                              | ["d17", "d18"]
+        "(common1718 OR common1819)"                                          | ["d17", "d18", "d19"]
+        "(common1718 OR common1819) AND NOT term1801a"                        | ["d17", "d19"]
+        "fileName = 'document01.xml'"                                         | ["d01"]
+        "fileName <= 'document02.xml'"                                        | ["d01", "d02"]
+        "fileSize = 1002"                                                     | ["d02"]
+        "fileDate = 2022-01-01T10:00:03"                                      | ["d03"]
+        "fileDate > 2022-01-01T10:00:03 AND fileDate < 2022-01-01T10:00:06"   | ["d04", "d05"]
+        "fileDate >= 2022-01-01T10:00:03 AND fileDate <= 2022-01-01T10:00:06" | ["d03", "d04", "d05", "d06"]
+        "messageFrom = 'FROM04'"                                              | ["d04"]
+        "fromDescription = 'from05'"                                          | ["d05"]
+        "messageTo = 'TO06'"                                                  | ["d06"]
+        "toDescription = 'to07'"                                              | ["d07"]
+        "messageId = 'message008'"                                            | ["d08"]
+        "messageDate = 2022-02-01T11:00:09"                                   | ["d09"]
+        "transactionGroup = 'HSMD'"                                           | ["d10"]
+        "priority = 'Low'"                                                    | ["d11"]
+        "market = 'VICGAS'"                                                   | ["d12"]
+        "market != 'NEM'"                                                     | ["d09", "d10", "d12"]
     }
 }
 
