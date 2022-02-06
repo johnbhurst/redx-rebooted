@@ -35,8 +35,8 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         private val document: Root<Document>,
         private val transactions: SetJoin<Document, Transaction>,
     ) {
-        fun build(expr: Expr): Expression<Boolean> {
-            return when (expr) {
+        fun build(expr: Expr): Expression<Boolean> =
+            when (expr) {
                 is Expr.And -> expr.sequences.map(::build).reduce(criteriaBuilder::and)
                 is Expr.Or -> expr.terms.map(::build).reduce(criteriaBuilder::or)
                 is Expr.Not -> criteriaBuilder.not(build(expr.expr))
@@ -45,7 +45,6 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
                 is Expr.StringRestriction -> searchTermExpr(expr.value)
                 else -> throw RuntimeException("Unsupported expression type ${expr.javaClass}")
             }
-        }
 
         private fun binaryExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
             when (variable) {
