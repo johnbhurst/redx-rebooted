@@ -25,7 +25,6 @@ import javax.persistence.criteria.JoinType
 import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
 import javax.persistence.criteria.SetJoin
-import kotlin.reflect.KClass
 import kotlin.reflect.KFunction2
 
 class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManager) : CustomizedDocumentRepository {
@@ -36,26 +35,6 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         private val document: Root<Document>,
         private val transactions: SetJoin<Document, Transaction>,
     ) {
-        private val documentProperties = mapOf(
-            "fileName" to String::class,
-            "fileSize" to Int::class,
-            "fileDate" to LocalDateTime::class,
-            "messageFrom" to String::class,
-            "fromDescription" to String::class,
-            "messageTo" to String::class,
-            "toDescription" to String::class,
-            "messageId" to String::class,
-            "messageDate" to LocalDateTime::class,
-            "transactionGroup" to String::class,
-            "priority" to String::class,
-            "market" to String::class,
-        )
-        private val transactionProperties = mapOf(
-            "transactionDate" to LocalDateTime::class,
-            "transactionId" to String::class,
-            "initiatingTransactionId" to String::class,
-            "transactionName" to String::class,
-        )
 
         fun build(expr: Expr): Expression<Boolean> {
             return when (expr) {
@@ -70,46 +49,52 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         }
 
         private fun binaryExpr(variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
-            if (documentProperties.containsKey(variable)) {
-                buildBinaryExpr(document, variable, operator, value, documentProperties.getValue(variable))
-            } else if (variable.startsWith("txn.") && transactionProperties.containsKey(variable.substring(4))) {
-                val txnVariable = variable.substring(4)
-                buildBinaryExpr(transactions, txnVariable, operator, value, transactionProperties.getValue(txnVariable))
+            when (variable) {
+                "fileName" -> stringExpr(document, variable, operator, value)
+                "fileSize" -> integerExpr(document, variable, operator, value)
+                "fileDate" -> dateTimeExpr(document, variable, operator, value)
+                "messageFrom" -> stringExpr(document, variable, operator, value)
+                "fromDescription" -> stringExpr(document, variable, operator, value)
+                "messageTo" -> stringExpr(document, variable, operator, value)
+                "toDescription" -> stringExpr(document, variable, operator, value)
+                "messageId" -> stringExpr(document, variable, operator, value)
+                "messageDate" -> dateTimeExpr(document, variable, operator, value)
+                "transactionGroup" -> stringExpr(document, variable, operator, value)
+                "priority" -> stringExpr(document, variable, operator, value)
+                "market" -> stringExpr(document, variable, operator, value)
+                "txn.transactionDate" -> dateTimeExpr(transactions, "transactionDate", operator, value)
+                "txn.transactionId" -> stringExpr(transactions, "transactionId", operator, value)
+                "txn.initiatingTransactionId" -> stringExpr(transactions, "initiatingTransactionId", operator, value)
+                "txn.transactionName" -> stringExpr(transactions, "transactionName", operator, value)
+                else -> throw RuntimeException("Unsupported variable $variable")
+            }
+
+        private fun <X,Y> stringExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+            if (value is Value.StringValue) {
+                val criteriaOp = getCriteriaOperator<String>(operator)
+                criteriaOp(target.get(variable), criteriaBuilder.literal(value.value))
             } else {
-                throw RuntimeException("Unrecognised variable $variable")
+                throw RuntimeException("Expected string value for $variable, got ${value.javaClass.simpleName}")
             }
 
-        private fun <X,Y> buildBinaryExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value, type: KClass<out Any>): Expression<Boolean> =
-            when (type) {
-                String::class -> if (value is Value.StringValue) {
-                    val variableExpr = target.get<String>(variable)
-                    val criteriaOp = getOperator<String>(operator)
-                    val valueExpr = criteriaBuilder.literal(value.value)
-                    criteriaOp(variableExpr, valueExpr)
-                } else {
-                    throw RuntimeException("Expected string value for $variable, got ${value.javaClass.simpleName}")
-                }
-                Integer::class -> if (value is Value.IntegerValue) {
-                    val variableExpr = target.get<Int>(variable)
-                    val criteriaOp = getOperator<Int>(operator)
-                    val valueExpr = criteriaBuilder.literal(value.value)
-                    criteriaOp(variableExpr, valueExpr)
-                } else {
-                    throw RuntimeException("Expected integer value for $variable, got ${value.javaClass.simpleName}")
-                }
-                LocalDateTime::class -> if (value is Value.DateTimeValue) {
-                    val variableExpr = target.get<LocalDateTime>(variable)
-                    val criteriaOp = getOperator<LocalDateTime>(operator)
-                    val valueExpr = criteriaBuilder.literal(value.value)
-                    criteriaOp(variableExpr, valueExpr)
-                } else {
-                    throw RuntimeException("Expected datetime value for $variable, got ${value.javaClass.simpleName}")
-                }
-                else -> throw RuntimeException("Invalid variable type $type")
+        private fun <X,Y> integerExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+            if (value is Value.IntegerValue) {
+                val criteriaOp = getCriteriaOperator<Int>(operator)
+                criteriaOp(target.get(variable), criteriaBuilder.literal(value.value))
+            } else {
+                throw RuntimeException("Expected integer value for $variable, got ${value.javaClass.simpleName}")
             }
 
-        private fun <T: Comparable<T>> getOperator(op: BinaryOperator) : KFunction2<Expression<T>, Expression<T>, Predicate> =
-            when (op) {
+        private fun <X,Y> dateTimeExpr(target: From<X,Y>, variable: String, operator: BinaryOperator, value: Value): Expression<Boolean> =
+            if (value is Value.DateTimeValue) {
+                val criteriaOp = getCriteriaOperator<LocalDateTime>(operator)
+                criteriaOp(target.get(variable), criteriaBuilder.literal(value.value))
+            } else {
+                throw RuntimeException("Expected datetime value for $variable, got ${value.javaClass.simpleName}")
+            }
+
+        private fun <T: Comparable<T>> getCriteriaOperator(operator: BinaryOperator) : KFunction2<Expression<T>, Expression<T>, Predicate> =
+            when (operator) {
                 EQUALS -> criteriaBuilder::equal
                 GREATER_EQUALS -> criteriaBuilder::greaterThanOrEqualTo
                 GREATER_THAN -> criteriaBuilder::greaterThan
