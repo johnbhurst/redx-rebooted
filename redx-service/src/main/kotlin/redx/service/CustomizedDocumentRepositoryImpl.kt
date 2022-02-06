@@ -29,13 +29,12 @@ import kotlin.reflect.KFunction2
 
 class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManager) : CustomizedDocumentRepository {
 
-    class PredicateBuilder(
+    private class PredicateBuilder(
         private val criteriaBuilder: CriteriaBuilder,
         private val criteriaQuery: CriteriaQuery<Document>,
         private val document: Root<Document>,
         private val transactions: SetJoin<Document, Transaction>,
     ) {
-
         fun build(expr: Expr): Expression<Boolean> {
             return when (expr) {
                 is Expr.And -> expr.sequences.map(::build).reduce(criteriaBuilder::and)
@@ -110,7 +109,7 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
             searchQuery.select(searchTerms).where(criteriaBuilder.equal(searchTerms, criteriaBuilder.literal(value)))
             return criteriaBuilder.exists(searchQuery)
         }
-    }
+    } // PredicateBuilder
 
     private fun createQuery(filter: String): TypedQuery<Document> {
         val criteriaBuilder = entityManager.criteriaBuilder
@@ -126,16 +125,10 @@ class CustomizedDocumentRepositoryImpl(@Resource val entityManager: EntityManage
         return entityManager.createQuery(criteriaQuery)
     }
 
-    override fun findForFilter(filter: String): Iterable<Document> {
-        return createQuery(filter).resultList
-    }
+    override fun findForFilter(filter: String): Iterable<Document> = createQuery(filter).resultList
 
-    override fun findForFilter(filter: String, sort: Sort): Iterable<Document> {
-        TODO("Not yet implemented")
-    }
+    override fun findForFilter(filter: String, sort: Sort): Iterable<Document> = TODO("Not yet implemented")
 
-    override fun findForFilter(filter: String, pageable: Pageable): Page<Document> {
-        TODO("Not yet implemented")
-    }
+    override fun findForFilter(filter: String, pageable: Pageable): Page<Document> = TODO("Not yet implemented")
 
 }
