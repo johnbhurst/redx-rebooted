@@ -33,14 +33,17 @@
 * GraalVM Native Command-Line tools?
 * Quarkus?
 * Structurizr + PlantUML
+* Structurizr + docs + adrs linked
 * Async REST?
 * GitHub
 * Cloud CI - Travis?
 * Swagger API
 * Swagger docs (or Spring docs?)
 * Postman collection, including authentication
+* Backstage developer portal
 * Swagger generated client? Java, Groovy, Kotlin, JS?
 * Secure encryption with distinct key per item
+* Vault and SpringVault for secrets?
 
 ## Notes
 
